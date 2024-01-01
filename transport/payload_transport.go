@@ -1,6 +1,9 @@
 package transport
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // Authentication abstraction
 type Authentication interface {
@@ -17,6 +20,7 @@ type PayloadData interface {
 	Accept() string
 	ContentType() string
 	Content() ([]byte, error)
+	ContentMust() []byte
 }
 
 type PayloadRequest struct {
@@ -34,4 +38,14 @@ type PayloadResponse struct {
 
 func (p *PayloadResponse) Object(v any) error {
 	return json.Unmarshal([]byte(p.Body), &v)
+}
+
+func handleResponseException(reply *PayloadResponse) (*PayloadResponse, error) {
+	switch reply.StatusCode / 100 {
+	case 4:
+		return reply, BadRequestError{code: reply.StatusCode, error: reply.Body}
+
+	default:
+		return reply, fmt.Errorf(reply.Body)
+	}
 }

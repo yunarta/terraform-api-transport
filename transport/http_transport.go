@@ -136,5 +136,5 @@ func (h *HttpPayloadTransport) SendWithExpectedStatus(request *PayloadRequest, e
 	}
 
 	// If status is different from expected return error
-	return reply, fmt.Errorf(reply.Body)
+	return handleResponseException(reply)
 }

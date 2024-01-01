@@ -50,8 +50,7 @@ func TestMultipartPayload_MultipartFile(t *testing.T) {
 		},
 	}
 
-	buf, err := payload.Content()
-	assert.Nil(t, err)
+	buf := payload.ContentMust()
 
 	bodyStr := string(buf)
 

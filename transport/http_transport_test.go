@@ -45,6 +45,9 @@ func TestHTTPTransportSendWithExpectedStatus(t *testing.T) {
 		} else if strings.Contains(req.URL.Path, "created") {
 			rw.WriteHeader(http.StatusCreated)
 			_, _ = rw.Write([]byte("OK"))
+		} else if strings.Contains(req.URL.Path, "moved") {
+			rw.WriteHeader(http.StatusMovedPermanently)
+			_, _ = rw.Write([]byte("OK"))
 		} else {
 			rw.WriteHeader(http.StatusBadRequest)
 		}
@@ -74,6 +77,14 @@ func TestHTTPTransportSendWithExpectedStatus(t *testing.T) {
 
 	assert.Nil(t, err, "got error: %v", err)
 	assert.Equal(t, http.StatusCreated, reply.StatusCode)
+
+	reply, err = transport.SendWithExpectedStatus(&PayloadRequest{
+		Method: "GET",
+		Url:    "/moved",
+	}, http.StatusOK)
+
+	assert.NotNil(t, err, "got error: %v", err)
+	assert.Equal(t, http.StatusMovedPermanently, reply.StatusCode)
 
 	reply, err = transport.SendWithExpectedStatus(&PayloadRequest{
 		Method: "GET",

@@ -70,5 +70,14 @@ func (m *MultipartPayload) Content() ([]byte, error) {
 	return body.Bytes(), nil
 }
 
+func (m *MultipartPayload) ContentMust() []byte {
+	payload, err := m.Content()
+	if err != nil {
+		panic(err)
+	}
+
+	return payload
+}
+
 // _ is an assertion to ensure that our MultipartPayload struct complies with the PayloadData interface
 var _ PayloadData = &MultipartPayload{}
